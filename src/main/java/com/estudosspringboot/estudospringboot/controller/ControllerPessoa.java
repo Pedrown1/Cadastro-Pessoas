@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
-public class ExecAPI {
+@RequestMapping("/api")
+public class ControllerPessoa {
 
     @Autowired
     private ServicePessoa service;
@@ -38,57 +38,52 @@ public class ExecAPI {
 
     @PostMapping("/cadastro")
     public List<ModelPessoa> cadastraPessoas(@RequestBody List<ModelPessoa> pessoas) {
-        pessoas.forEach(p -> System.out.println("[POST] - Recebido: " + p));
         return service.saveAll(pessoas);
     }
 
     @GetMapping("/consultar")
-    public Map<String, Object> consultarCadastro(){
-        try{
+    public Map<String, Object> consultarCadastro() {
+        try {
             List<ModelPessoa> pessoas = service.findAll();
-
-            if (pessoas.isEmpty()){
+            if (pessoas.isEmpty()) {
                 return util.estruturaAPI(BigDecimal.valueOf(2), "Requisição vazia! - []", pessoas);
             }
-
             return util.estruturaAPI(BigDecimal.ONE, "Requisição realizada com Sucesso!", pessoas);
-
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return util.estruturaAPI(BigDecimal.ZERO, "Falha na requisição: " + e.getMessage(), null);
         }
     }
 
     @GetMapping("/consultar/{id}")
-    public Map<String, Object> consultarCadastroById(@PathVariable Long id){
-        try{
+    public Map<String, Object> consultarCadastroById(@PathVariable Long id) {
+        try {
             boolean encontrou = util.buscaId(id);
-            if (encontrou){
+            if (encontrou) {
                 Optional<ModelPessoa> pessoa = service.findById(id);
                 return util.estruturaAPI(BigDecimal.ONE, "Pessoa encontrada com sucesso!", pessoa.get());
-            }else{
+            } else {
                 return util.estruturaAPI(BigDecimal.valueOf(2), "ID não encontrado!", "[]");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return util.estruturaAPI(BigDecimal.ZERO, "Falha na requisição: " + e.getMessage(), null);
         }
     }
 
     @DeleteMapping("/delete/{id}")
-    public Map<String, Object> deletarPessoa(@PathVariable Long id){
+    public Map<String, Object> deletarPessoa(@PathVariable Long id) {
         try {
             boolean encontrou = util.buscaId(id);
-            if (encontrou){
+            if (encontrou) {
                 service.deleteById(id);
-                return util.estruturaAPI(BigDecimal.ONE, "Deletado com Sucesso!", "[ID - "+id+"]");
-            }else{
+                return util.estruturaAPI(BigDecimal.ONE, "Deletado com Sucesso!", "[ID - " + id + "]");
+            } else {
                 return util.estruturaAPI(BigDecimal.valueOf(2), "ID não encontrado!", "[]");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return util.estruturaAPI(BigDecimal.ZERO, "Falha na requisição: " + e.getMessage(), null);
         }
     }
-
 }
