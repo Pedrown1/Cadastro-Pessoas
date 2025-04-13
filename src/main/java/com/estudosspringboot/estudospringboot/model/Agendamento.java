@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,4 +27,5 @@ public class Agendamento {
 
     private String descricao;
 
+    private BigDecimal valor;
 }

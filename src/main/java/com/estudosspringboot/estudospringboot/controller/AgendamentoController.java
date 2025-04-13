@@ -28,15 +28,17 @@ public class AgendamentoController {
     @PostMapping("/cadastrar")
     public Map<String, Object> cadastrarAgendamento(@RequestBody Agendamento agendamento) {
         try {
-            if (agendamento.getPessoa() == null ||
-                    agendamento.getData() == null || agendamento.getData().isBlank() ||
-                    agendamento.getHora() == null || agendamento.getHora().isBlank()) {
-
+            if (serviceAgendamento.dataHoraObrigatoriedade(agendamento)) {
                 return util.estruturaAPI(BigDecimal.valueOf(3), "Data e hora do agendamento são obrigatórias!", null);
             }
 
-            if (!util.validarFormatoData(agendamento.getData()) || !util.validarFormatoHora(agendamento.getHora())) {
-                return util.estruturaAPI(BigDecimal.valueOf(4), "Formato inválido! Data deve ser dd/MM/yyyy e hora deve ser HH:mm.", null);
+            String msgErro = serviceAgendamento.dataHoraInvalida(agendamento);
+            if (msgErro != null) {
+                return util.estruturaAPI(BigDecimal.valueOf(4), msgErro, null);
+            }
+
+            if (agendamento.getValor() == null){
+                return util.estruturaAPI(BigDecimal.valueOf(5), "Informar o valor do corte é obrigatório.", null);
             }
 
             Agendamento savedAgendamento = serviceAgendamento.save(agendamento);
