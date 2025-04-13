@@ -43,29 +43,33 @@ public class ServiceAgendamento {
         return agendamento.getPessoa() == null || agendamento.getData() == null || agendamento.getData().isBlank() || agendamento.getHora() == null || agendamento.getHora().isBlank();
     }
 
-    public String dataHoraInvalida(Agendamento agendamento){
+    public String dataHoraInvalida(Agendamento agendamento) {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate dataRecebida = LocalDate.parse(agendamento.getData(), formatter);
-        LocalDate dataAtual = LocalDate.now();
-
-        if (!util.validarFormatoData(agendamento.getData()) || !util.validarFormatoHora(agendamento.getHora())){
-            return  "Formato inválido! Data deve ser dd/MM/yyyy e hora deve ser HH:mm.";
+        if (!util.validarFormatoData(agendamento.getData()) || !util.validarFormatoHora(agendamento.getHora())) {
+            return "Formato inválido! Data deve ser dd/MM/yyyy e hora deve ser HH:mm.";
         }
 
-        if (dataRecebida.isBefore(dataAtual)){
+        DateTimeFormatter formatterData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatterHora = DateTimeFormatter.ofPattern("HH:mm");
+
+        LocalDate dataRecebida = LocalDate.parse(agendamento.getData(), formatterData);
+        LocalDate dataAtual = LocalDate.now();
+
+        if (dataRecebida.isBefore(dataAtual)) {
             return "Data Inválida! Não é possível realizar agendamento em dias retroativos ao vigente.";
         }
 
-        DateTimeFormatter formatterHrMin = DateTimeFormatter.ofPattern("HH:mm");
-        LocalTime horaRecebidaTime = LocalTime.parse(agendamento.getHora(), formatterHrMin);
-        LocalTime horaAtual = LocalTime.now();
+        if (dataRecebida.isEqual(dataAtual)) {
+            LocalTime horaRecebida = LocalTime.parse(agendamento.getHora(), formatterHora);
+            LocalTime horaAtual = LocalTime.now();
 
-        if (horaRecebidaTime.isBefore(horaAtual)) {
-            return "Hora Inválida! Não é possível realizar agendamento em hora retroativa a atual.";
+            if (horaRecebida.isBefore(horaAtual)) {
+                return "Hora Inválida! Não é possível realizar agendamento em hora retroativa à atual.";
+            }
         }
 
         return null;
     }
+
 
 }

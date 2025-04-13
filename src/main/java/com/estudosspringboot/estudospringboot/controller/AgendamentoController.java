@@ -1,6 +1,7 @@
 package com.estudosspringboot.estudospringboot.controller;
 
 import com.estudosspringboot.estudospringboot.model.Agendamento;
+import com.estudosspringboot.estudospringboot.model.ModelPessoa;
 import com.estudosspringboot.estudospringboot.service.EmailService;
 import com.estudosspringboot.estudospringboot.service.ServiceAgendamento;
 import com.estudosspringboot.estudospringboot.service.ServicePessoa;
@@ -49,21 +50,24 @@ public class AgendamentoController {
                 return util.estruturaAPI(BigDecimal.valueOf(6), "ID da pessoa é obrigatório!", null);
             }
 
-            boolean pessoaExiste = servicePessoa.findById(agendamento.getPessoa().getId()).isPresent();
-            if (!pessoaExiste) {
+            Optional<ModelPessoa> pessoaOptional = servicePessoa.findById(agendamento.getPessoa().getId());
+            if (!pessoaOptional.isPresent()) {
                 return util.estruturaAPI(BigDecimal.valueOf(7), "Pessoa com o ID informado não foi encontrada!", null);
             }
+            ModelPessoa pessoa = pessoaOptional.get();
+
+            agendamento.setPessoa(pessoa);
 
             Agendamento savedAgendamento = serviceAgendamento.save(agendamento);
 
-            String to = "pedroCarvalho790@yopmail.com";
-            String subject = "Novo Agendamento Criado";
-            String body = "Um novo agendamento foi realizado:\n\n" +
-                    "ID do Agendamento: " + savedAgendamento.getId() + "\n" +
-                    "Data: " + savedAgendamento.getData() + "\n" +
-                    "Hora: " + savedAgendamento.getHora() + "\n" +
-                    "Descrição: " + savedAgendamento.getDescricao() + "\n" +
-                    "Valor: " + savedAgendamento.getValor();
+            String to = pessoa.getEmail();
+            String subject = "Novo Agendamento Criado!!";
+            String body = "<h1>Um novo agendamento foi realizado:</h1>" +
+                    "<br><b>ID do Agendamento:</b> " + savedAgendamento.getId() +
+                    "<br><b>Data:</b> " + savedAgendamento.getData() +
+                    "<br><b>Hora:</b> " + savedAgendamento.getHora() +
+                    "<br><b>Descrição:</b> " + savedAgendamento.getDescricao() +
+                    "<br><b>Valor:</b> " + savedAgendamento.getValor();
 
             emailService.sendEmail(to, subject, body);
 
