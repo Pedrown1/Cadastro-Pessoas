@@ -41,6 +41,15 @@ public class AgendamentoController {
                 return util.estruturaAPI(BigDecimal.valueOf(5), "Informar o valor do corte é obrigatório.", null);
             }
 
+            if (agendamento.getPessoa() == null || agendamento.getPessoa().getId() == null) {
+                return util.estruturaAPI(BigDecimal.valueOf(6), "ID da pessoa é obrigatório!", null);
+            }
+
+            boolean pessoaExiste = servicePessoa.findById(agendamento.getPessoa().getId()).isPresent();
+            if (!pessoaExiste) {
+                return util.estruturaAPI(BigDecimal.valueOf(7), "Pessoa com o ID informado não foi encontrada!", null);
+            }
+
             Agendamento savedAgendamento = serviceAgendamento.save(agendamento);
             return util.estruturaAPI(BigDecimal.ONE, "Agendamento realizado com sucesso!", savedAgendamento);
         } catch (Exception e) {
