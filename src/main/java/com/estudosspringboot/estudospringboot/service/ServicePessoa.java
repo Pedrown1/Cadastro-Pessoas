@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class ServicePessoa {
@@ -34,22 +36,29 @@ public class ServicePessoa {
 
         for (ModelPessoa pessoa : pessoas) {
 
-            Long id = pessoa.getId();
-
             if (pessoa.getNome() == null) {
-                return "Informar o Nome da pessoa ("+id+") é obrigatório.";
+                return "Informar o Nome da pessoa é obrigatório.";
             }
             if (pessoa.getCpf() == null) {
-                return "Informar o CPF da pessoa ("+id+") é obrigatório.";
+                return "Informar o CPF da pessoa é obrigatório.";
             }
 
             if (pessoa.getIdade() == null) {
-                return "Informar a Idade da pessoa ("+id+") é obrigatório.";
+                return "Informar a Idade da pessoa é obrigatório.";
             }
 
-            if (pessoa.getEmail() == null) {
-                return "Informar o E-mail da pessoa ("+id+") é obrigatório.";
+            if (pessoa.getEmail() == null ) {
+                return "Informar o E-mail da pessoa é obrigatório.";
             }
+
+            String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+            Pattern pattern = Pattern.compile(emailRegex);
+            Matcher matcher = pattern.matcher(pessoa.getEmail());
+
+            if (!matcher.matches()) {
+                return "O e-mail informado para a pessoa é inválido.";
+            }
+
         }
 
         return null;

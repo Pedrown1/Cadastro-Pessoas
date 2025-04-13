@@ -66,7 +66,7 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
-
+		<!-- SEGURANCA API-->
 			<dependency>
 				<groupId>io.jsonwebtoken</groupId>
 				<artifactId>jjwt-api</artifactId>
@@ -91,6 +91,13 @@
 			<artifactId>ojdbc11</artifactId>
 			<version>21.9.0.0</version>
 		</dependency>
+
+		<!-- E-MAIL -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

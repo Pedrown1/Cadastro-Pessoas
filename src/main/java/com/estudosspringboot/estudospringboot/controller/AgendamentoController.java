@@ -1,6 +1,7 @@
 package com.estudosspringboot.estudospringboot.controller;
 
 import com.estudosspringboot.estudospringboot.model.Agendamento;
+import com.estudosspringboot.estudospringboot.service.EmailService;
 import com.estudosspringboot.estudospringboot.service.ServiceAgendamento;
 import com.estudosspringboot.estudospringboot.service.ServicePessoa;
 import com.estudosspringboot.estudospringboot.utils.Utilidades;
@@ -24,6 +25,9 @@ public class AgendamentoController {
 
     @Autowired
     private Utilidades util;
+
+    @Autowired
+    private EmailService emailService;
 
     @PostMapping("/cadastrar")
     public Map<String, Object> cadastrarAgendamento(@RequestBody Agendamento agendamento) {
@@ -51,6 +55,18 @@ public class AgendamentoController {
             }
 
             Agendamento savedAgendamento = serviceAgendamento.save(agendamento);
+
+            String to = "pedroCarvalho790@yopmail.com";
+            String subject = "Novo Agendamento Criado";
+            String body = "Um novo agendamento foi realizado:\n\n" +
+                    "ID do Agendamento: " + savedAgendamento.getId() + "\n" +
+                    "Data: " + savedAgendamento.getData() + "\n" +
+                    "Hora: " + savedAgendamento.getHora() + "\n" +
+                    "Descrição: " + savedAgendamento.getDescricao() + "\n" +
+                    "Valor: " + savedAgendamento.getValor();
+
+            emailService.sendEmail(to, subject, body);
+
             return util.estruturaAPI(BigDecimal.ONE, "Agendamento realizado com sucesso!", savedAgendamento);
         } catch (Exception e) {
             e.printStackTrace();
