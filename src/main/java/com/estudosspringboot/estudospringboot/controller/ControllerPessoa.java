@@ -37,8 +37,15 @@ public class ControllerPessoa {
     }
 
     @PostMapping("/cadastro")
-    public List<ModelPessoa> cadastraPessoas(@RequestBody List<ModelPessoa> pessoas) {
-        return service.saveAll(pessoas);
+    public Map<String, Object> cadastraPessoas(@RequestBody List<ModelPessoa> pessoas) {
+
+        String errorMsg = service.validaInfo(pessoas);
+        if (errorMsg != null){
+            return util.estruturaAPI(BigDecimal.valueOf(5), errorMsg, null);
+        }
+
+        service.saveAll(pessoas);
+        return util.estruturaAPI(BigDecimal.ONE, "Pessoa Cadastrada com Sucesso!", pessoas);
     }
 
     @GetMapping("/consultar")

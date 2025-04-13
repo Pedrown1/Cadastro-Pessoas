@@ -15,9 +15,11 @@ public class ModelPessoa {
 
     private String nome;
 
-    private int idade;
+    private Integer idade;
 
     private String cpf;
+
+    private String email;
 
     // Lombok (GET/SET)
 }

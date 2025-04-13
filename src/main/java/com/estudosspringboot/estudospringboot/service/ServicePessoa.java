@@ -29,4 +29,29 @@ public class ServicePessoa {
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
+
+    public String validaInfo(List<ModelPessoa> pessoas) {
+
+        for (ModelPessoa pessoa : pessoas) {
+
+            Long id = pessoa.getId();
+
+            if (pessoa.getNome() == null) {
+                return "Informar o Nome da pessoa ("+id+") é obrigatório.";
+            }
+            if (pessoa.getCpf() == null) {
+                return "Informar o CPF da pessoa ("+id+") é obrigatório.";
+            }
+
+            if (pessoa.getIdade() == null) {
+                return "Informar a Idade da pessoa ("+id+") é obrigatório.";
+            }
+
+            if (pessoa.getEmail() == null) {
+                return "Informar o E-mail da pessoa ("+id+") é obrigatório.";
+            }
+        }
+
+        return null;
+    }
 }
