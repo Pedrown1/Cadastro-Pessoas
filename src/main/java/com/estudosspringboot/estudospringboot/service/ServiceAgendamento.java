@@ -71,5 +71,27 @@ public class ServiceAgendamento {
         return null;
     }
 
+    public boolean existeConflitoDeHorario(Agendamento novoAgendamento) {
+        DateTimeFormatter formatterData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatterHora = DateTimeFormatter.ofPattern("HH:mm");
+
+        LocalDate data = LocalDate.parse(novoAgendamento.getData(), formatterData);
+        LocalTime hora = LocalTime.parse(novoAgendamento.getHora(), formatterHora);
+
+        List<Agendamento> agendamentosDoDia = repositoryAgendamento.findByData(novoAgendamento.getData());
+
+        for (Agendamento ag : agendamentosDoDia) {
+            if (ag.getHora() == null || ag.getHora().isBlank()) continue;
+
+            LocalTime horaAgendada = LocalTime.parse(ag.getHora(), formatterHora);
+            long diferencaMinutos = Math.abs(java.time.Duration.between(horaAgendada, hora).toMinutes());
+            if (diferencaMinutos < 60) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 
 }

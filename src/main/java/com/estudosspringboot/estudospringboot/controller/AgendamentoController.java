@@ -50,6 +50,10 @@ public class AgendamentoController {
                 return util.estruturaAPI(BigDecimal.valueOf(6), "ID da pessoa é obrigatório!", null);
             }
 
+            if (serviceAgendamento.existeConflitoDeHorario(agendamento)) {
+                return util.estruturaAPI(BigDecimal.valueOf(8), "Já existe agendamento com menos de 1 hora de diferença nesse dia!", null);
+            }
+
             Optional<ModelPessoa> pessoaOptional = servicePessoa.findById(agendamento.getPessoa().getId());
             if (!pessoaOptional.isPresent()) {
                 return util.estruturaAPI(BigDecimal.valueOf(7), "Pessoa com o ID informado não foi encontrada!", null);
