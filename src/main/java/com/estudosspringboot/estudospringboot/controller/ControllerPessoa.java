@@ -48,7 +48,7 @@ public class ControllerPessoa {
         return util.estruturaAPI(BigDecimal.ONE, "Pessoa Cadastrada com Sucesso!", pessoas);
     }
 
-    @GetMapping("/pesssoa/consultar")
+    @GetMapping("/pessoa/consultar")
     public Map<String, Object> consultarCadastro() {
         try {
             List<Pessoa> pessoas = service.findAll();
@@ -62,7 +62,7 @@ public class ControllerPessoa {
         }
     }
 
-    @GetMapping("/pesssoa/consultar/{id}")
+    @GetMapping("/pessoa/consultar/{id}")
     public Map<String, Object> consultarCadastroById(@PathVariable Long id) {
         try {
             boolean encontrou = util.buscaId(id);
@@ -78,7 +78,7 @@ public class ControllerPessoa {
         }
     }
 
-    @DeleteMapping("/pesssoa/delete/{id}")
+    @DeleteMapping("/pessoa/delete/{id}")
     public Map<String, Object> deletarPessoa(@PathVariable Long id) {
         try {
             boolean encontrou = util.buscaId(id);

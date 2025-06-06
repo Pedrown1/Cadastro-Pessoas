@@ -4,23 +4,21 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+
 @Entity
+@Table(name = "servico")
 @Data
-@Table(name = "pessoa")
 @ToString
-public class Pessoa {
+public class Servico {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome;
+    private String descricao;
 
-    private Integer idade;
+    private BigDecimal valor;
 
-    private String cpf;
-
-    private String email;
-
-    // Lombok (GET/SET)
+    // LOMBOK - Getters e setters
 }

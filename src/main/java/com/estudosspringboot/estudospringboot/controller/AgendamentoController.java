@@ -2,9 +2,11 @@ package com.estudosspringboot.estudospringboot.controller;
 
 import com.estudosspringboot.estudospringboot.model.Agendamento;
 import com.estudosspringboot.estudospringboot.model.Pessoa;
+import com.estudosspringboot.estudospringboot.model.Servico;
 import com.estudosspringboot.estudospringboot.service.EmailService;
 import com.estudosspringboot.estudospringboot.service.ServiceAgendamento;
 import com.estudosspringboot.estudospringboot.service.ServicePessoa;
+import com.estudosspringboot.estudospringboot.service.ServiceServico;
 import com.estudosspringboot.estudospringboot.utils.Utilidades;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,9 @@ public class AgendamentoController {
     private ServicePessoa servicePessoa;
 
     @Autowired
+    private ServiceServico serviceServico;
+
+    @Autowired
     private Utilidades util;
 
     @Autowired
@@ -43,17 +48,19 @@ public class AgendamentoController {
                 return util.estruturaAPI(BigDecimal.valueOf(4), msgErro, null);
             }
 
-            if (agendamento.getValor() == null){
-                return util.estruturaAPI(BigDecimal.valueOf(5), "Informar o valor do corte é obrigatório.", null);
-            }
-
             if (agendamento.getPessoa() == null || agendamento.getPessoa().getId() == null) {
                 return util.estruturaAPI(BigDecimal.valueOf(6), "ID da pessoa é obrigatório!", null);
             }
 
-            if (serviceAgendamento.existeConflitoDeHorario(agendamento)) {
-                return util.estruturaAPI(BigDecimal.valueOf(8), "Já existe agendamento com menos de 1 hora de diferença nesse dia!", null);
+            if (agendamento.getServico() == null || agendamento.getServico().getId() == null) {
+                return util.estruturaAPI(BigDecimal.valueOf(9), "ID do serviço é obrigatório!", null);
             }
+
+            Optional<Servico> servicoOptional = serviceServico.findById(agendamento.getServico().getId());
+            if (!servicoOptional.isPresent()) {
+                return util.estruturaAPI(BigDecimal.valueOf(10), "Serviço com o ID informado não foi encontrado!", null);
+            }
+            Servico servico = servicoOptional.get();
 
             Optional<Pessoa> pessoaOptional = servicePessoa.findById(agendamento.getPessoa().getId());
             if (!pessoaOptional.isPresent()) {
@@ -61,7 +68,14 @@ public class AgendamentoController {
             }
             Pessoa pessoa = pessoaOptional.get();
 
+            agendamento.setDescricao(servico.getDescricao());
+            agendamento.setValor(servico.getValor());
             agendamento.setPessoa(pessoa);
+            agendamento.setServico(servico);
+
+            if (serviceAgendamento.existeConflitoDeHorario(agendamento)) {
+                return util.estruturaAPI(BigDecimal.valueOf(8), "Já existe agendamento com menos de 1 hora de diferença nesse dia!", null);
+            }
 
             Agendamento savedAgendamento = serviceAgendamento.save(agendamento);
 
@@ -69,51 +83,20 @@ public class AgendamentoController {
             String subject = "Novo Agendamento Criado!";
             String body = "<!DOCTYPE html>" +
                     "<html lang='pt-br'>" +
-                    "<head>" +
-                    "  <meta charset='UTF-8'>" +
-                    "  <title>Agendamento Realizado!</title>" +
-                    "</head>" +
+                    "<head><meta charset='UTF-8'><title>Agendamento Realizado!</title></head>" +
                     "<body style='font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;'>" +
-                    "  <table align='center' width='600' cellpadding='0' cellspacing='0' style='background-color: #ffffff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);'>" +
-                    "    <tr>" +
-                    "      <td style='padding: 20px; text-align: center; background-color: #007bff; color: white; border-radius: 8px 8px 0 0;'>" +
-                    "        <h1 style='margin: 0;'>Novo Agendamento!</h1>" +
-                    "      </td>" +
-                    "    </tr>" +
-                    "    <tr>" +
-                    "      <td style='padding: 20px; color: #333333; font-size: 16px;'>" +
-                    "        <p>Olá,</p>" +
-                    "        <p>Um novo agendamento foi realizado com sucesso. Seguem os detalhes:</p>" +
-                    "        <table width='100%' cellpadding='5' cellspacing='0' style='border-collapse: collapse;'>" +
-                    "          <tr>" +
-                    "            <td style='font-weight: bold; width: 150px;'>Data:</td>" +
-                    "            <td>" + savedAgendamento.getData() + "</td>" +
-                    "          </tr>" +
-                    "          <tr style='background-color: #f9f9f9;'>" +
-                    "            <td style='font-weight: bold;'>Hora:</td>" +
-                    "            <td>" + savedAgendamento.getHora() + "</td>" +
-                    "          </tr>" +
-                    "          <tr>" +
-                    "            <td style='font-weight: bold;'>Descrição:</td>" +
-                    "            <td>" + savedAgendamento.getDescricao() + "</td>" +
-                    "          </tr>" +
-                    "          <tr style='background-color: #f9f9f9;'>" +
-                    "            <td style='font-weight: bold;'>Valor:</td>" +
-                    "            <td>R$ " + String.format(Locale.US, "%.2f", savedAgendamento.getValor()) + "</td>" +
-                    "          </tr>" +
-                    "        </table>" +
-                    "        <p style='margin-top: 30px;'>Obrigado por usar nosso sistema!<br>Código Teste Pedro</p>" +
-                    "      </td>" +
-                    "    </tr>" +
-                    "    <tr>" +
-                    "      <td style='padding: 10px; text-align: center; font-size: 12px; color: #777777; background-color: #f4f4f4; border-radius: 0 0 8px 8px;'>" +
-                    "        &copy; 2025 Sua Empresa. Todos os direitos reservados." +
-                    "      </td>" +
-                    "    </tr>" +
-                    "  </table>" +
-                    "</body>" +
-                    "</html>";
-
+                    "<table align='center' width='600' cellpadding='0' cellspacing='0' style='background-color: #ffffff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);'>" +
+                    "<tr><td style='padding: 20px; text-align: center; background-color: #007bff; color: white; border-radius: 8px 8px 0 0;'><h1 style='margin: 0;'>Novo Agendamento!</h1></td></tr>" +
+                    "<tr><td style='padding: 20px; color: #333333; font-size: 16px;'>" +
+                    "<p>Olá,</p><p>Um novo agendamento foi realizado com sucesso. Seguem os detalhes:</p>" +
+                    "<table width='100%' cellpadding='5' cellspacing='0' style='border-collapse: collapse;'>" +
+                    "<tr><td style='font-weight: bold; width: 150px;'>Data:</td><td>" + savedAgendamento.getData() + "</td></tr>" +
+                    "<tr style='background-color: #f9f9f9;'><td style='font-weight: bold;'>Hora:</td><td>" + savedAgendamento.getHora() + "</td></tr>" +
+                    "<tr><td style='font-weight: bold;'>Descrição:</td><td>" + savedAgendamento.getDescricao() + "</td></tr>" +
+                    "<tr style='background-color: #f9f9f9;'><td style='font-weight: bold;'>Valor:</td><td>R$ " + String.format(Locale.US, "%.2f", savedAgendamento.getValor()) + "</td></tr>" +
+                    "</table><p style='margin-top: 30px;'>Obrigado por usar nosso sistema!<br>Código Teste Pedro</p></td></tr>" +
+                    "<tr><td style='padding: 10px; text-align: center; font-size: 12px; color: #777777; background-color: #f4f4f4; border-radius: 0 0 8px 8px;'>&copy; 2025 Sua Empresa. Todos os direitos reservados.</td></tr>" +
+                    "</table></body></html>";
 
             emailService.sendEmail(to, subject, body);
 

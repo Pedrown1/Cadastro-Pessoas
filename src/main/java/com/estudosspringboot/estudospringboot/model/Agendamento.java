@@ -1,5 +1,6 @@
 package com.estudosspringboot.estudospringboot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -20,11 +21,16 @@ public class Agendamento {
     @JoinColumn(name = "pessoa_id", referencedColumnName = "id")
     private Pessoa pessoa;
 
+    @ManyToOne
+    @JoinColumn(name = "servico_id")
+    private Servico servico;
+
     private String data;
 
     private String hora;
 
+    @JsonIgnore
     private String descricao;
-
+    @JsonIgnore
     private BigDecimal valor;
 }
