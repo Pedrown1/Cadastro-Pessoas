@@ -36,7 +36,7 @@ public class ControllerPessoa {
         return util.estruturaAPI(BigDecimal.valueOf(3), "Usuário ou senha inválidos", null);
     }
 
-    @PostMapping("/cadastro")
+    @PostMapping("/pesssoa/cadastro")
     public Map<String, Object> cadastraPessoas(@RequestBody List<Pessoa> pessoas) {
 
         String errorMsg = service.validaInfo(pessoas);
@@ -48,7 +48,7 @@ public class ControllerPessoa {
         return util.estruturaAPI(BigDecimal.ONE, "Pessoa Cadastrada com Sucesso!", pessoas);
     }
 
-    @GetMapping("/consultar")
+    @GetMapping("/pesssoa/consultar")
     public Map<String, Object> consultarCadastro() {
         try {
             List<Pessoa> pessoas = service.findAll();
@@ -62,7 +62,7 @@ public class ControllerPessoa {
         }
     }
 
-    @GetMapping("/consultar/{id}")
+    @GetMapping("/pesssoa/consultar/{id}")
     public Map<String, Object> consultarCadastroById(@PathVariable Long id) {
         try {
             boolean encontrou = util.buscaId(id);
@@ -78,7 +78,7 @@ public class ControllerPessoa {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/pesssoa/delete/{id}")
     public Map<String, Object> deletarPessoa(@PathVariable Long id) {
         try {
             boolean encontrou = util.buscaId(id);
