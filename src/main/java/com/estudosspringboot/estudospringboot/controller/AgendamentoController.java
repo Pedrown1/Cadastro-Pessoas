@@ -1,7 +1,7 @@
 package com.estudosspringboot.estudospringboot.controller;
 
 import com.estudosspringboot.estudospringboot.model.Agendamento;
-import com.estudosspringboot.estudospringboot.model.ModelPessoa;
+import com.estudosspringboot.estudospringboot.model.Pessoa;
 import com.estudosspringboot.estudospringboot.service.EmailService;
 import com.estudosspringboot.estudospringboot.service.ServiceAgendamento;
 import com.estudosspringboot.estudospringboot.service.ServicePessoa;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -54,24 +55,65 @@ public class AgendamentoController {
                 return util.estruturaAPI(BigDecimal.valueOf(8), "Já existe agendamento com menos de 1 hora de diferença nesse dia!", null);
             }
 
-            Optional<ModelPessoa> pessoaOptional = servicePessoa.findById(agendamento.getPessoa().getId());
+            Optional<Pessoa> pessoaOptional = servicePessoa.findById(agendamento.getPessoa().getId());
             if (!pessoaOptional.isPresent()) {
                 return util.estruturaAPI(BigDecimal.valueOf(7), "Pessoa com o ID informado não foi encontrada!", null);
             }
-            ModelPessoa pessoa = pessoaOptional.get();
+            Pessoa pessoa = pessoaOptional.get();
 
             agendamento.setPessoa(pessoa);
 
             Agendamento savedAgendamento = serviceAgendamento.save(agendamento);
 
             String to = pessoa.getEmail();
-            String subject = "Novo Agendamento Criado!!";
-            String body = "<h1>Um novo agendamento foi realizado:</h1>" +
-                    "<br><b>ID do Agendamento:</b> " + savedAgendamento.getId() +
-                    "<br><b>Data:</b> " + savedAgendamento.getData() +
-                    "<br><b>Hora:</b> " + savedAgendamento.getHora() +
-                    "<br><b>Descrição:</b> " + savedAgendamento.getDescricao() +
-                    "<br><b>Valor:</b> " + savedAgendamento.getValor();
+            String subject = "Novo Agendamento Criado!";
+            String body = "<!DOCTYPE html>" +
+                    "<html lang='pt-br'>" +
+                    "<head>" +
+                    "  <meta charset='UTF-8'>" +
+                    "  <title>Agendamento Realizado!</title>" +
+                    "</head>" +
+                    "<body style='font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;'>" +
+                    "  <table align='center' width='600' cellpadding='0' cellspacing='0' style='background-color: #ffffff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);'>" +
+                    "    <tr>" +
+                    "      <td style='padding: 20px; text-align: center; background-color: #007bff; color: white; border-radius: 8px 8px 0 0;'>" +
+                    "        <h1 style='margin: 0;'>Novo Agendamento!</h1>" +
+                    "      </td>" +
+                    "    </tr>" +
+                    "    <tr>" +
+                    "      <td style='padding: 20px; color: #333333; font-size: 16px;'>" +
+                    "        <p>Olá,</p>" +
+                    "        <p>Um novo agendamento foi realizado com sucesso. Seguem os detalhes:</p>" +
+                    "        <table width='100%' cellpadding='5' cellspacing='0' style='border-collapse: collapse;'>" +
+                    "          <tr>" +
+                    "            <td style='font-weight: bold; width: 150px;'>Data:</td>" +
+                    "            <td>" + savedAgendamento.getData() + "</td>" +
+                    "          </tr>" +
+                    "          <tr style='background-color: #f9f9f9;'>" +
+                    "            <td style='font-weight: bold;'>Hora:</td>" +
+                    "            <td>" + savedAgendamento.getHora() + "</td>" +
+                    "          </tr>" +
+                    "          <tr>" +
+                    "            <td style='font-weight: bold;'>Descrição:</td>" +
+                    "            <td>" + savedAgendamento.getDescricao() + "</td>" +
+                    "          </tr>" +
+                    "          <tr style='background-color: #f9f9f9;'>" +
+                    "            <td style='font-weight: bold;'>Valor:</td>" +
+                    "            <td>R$ " + String.format(Locale.US, "%.2f", savedAgendamento.getValor()) + "</td>" +
+                    "          </tr>" +
+                    "        </table>" +
+                    "        <p style='margin-top: 30px;'>Obrigado por usar nosso sistema!<br>Código Teste Pedro</p>" +
+                    "      </td>" +
+                    "    </tr>" +
+                    "    <tr>" +
+                    "      <td style='padding: 10px; text-align: center; font-size: 12px; color: #777777; background-color: #f4f4f4; border-radius: 0 0 8px 8px;'>" +
+                    "        &copy; 2025 Sua Empresa. Todos os direitos reservados." +
+                    "      </td>" +
+                    "    </tr>" +
+                    "  </table>" +
+                    "</body>" +
+                    "</html>";
+
 
             emailService.sendEmail(to, subject, body);
 

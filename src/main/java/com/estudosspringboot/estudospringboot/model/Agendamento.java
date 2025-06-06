@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "agendamentos")
@@ -19,7 +18,7 @@ public class Agendamento {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pessoa_id", referencedColumnName = "id")
-    private ModelPessoa pessoa;
+    private Pessoa pessoa;
 
     private String data;
 

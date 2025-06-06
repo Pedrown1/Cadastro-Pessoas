@@ -8,7 +8,7 @@ import lombok.ToString;
 @Data
 @Table(name = "pessoa")
 @ToString
-public class ModelPessoa {
+public class Pessoa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

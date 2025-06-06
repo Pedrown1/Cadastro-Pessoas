@@ -1,13 +1,12 @@
 package com.estudosspringboot.estudospringboot.utils;
 
-import com.estudosspringboot.estudospringboot.model.ModelPessoa;
+import com.estudosspringboot.estudospringboot.model.Pessoa;
 import com.estudosspringboot.estudospringboot.repositorio.RepositoryPessoa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -32,7 +31,7 @@ public class Utilidades {
     }
 
     public boolean buscaId(Long id) {
-        Optional<ModelPessoa> pessoa = service.findById(id);
+        Optional<Pessoa> pessoa = service.findById(id);
         if (pessoa.isPresent()) {
             return true;
         }

@@ -2,7 +2,7 @@ package com.estudosspringboot.estudospringboot.controller;
 
 import com.estudosspringboot.estudospringboot.auth.AuthRequest;
 import com.estudosspringboot.estudospringboot.auth.JwtUtil;
-import com.estudosspringboot.estudospringboot.model.ModelPessoa;
+import com.estudosspringboot.estudospringboot.model.Pessoa;
 import com.estudosspringboot.estudospringboot.service.ServicePessoa;
 import com.estudosspringboot.estudospringboot.utils.Utilidades;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class ControllerPessoa {
     }
 
     @PostMapping("/cadastro")
-    public Map<String, Object> cadastraPessoas(@RequestBody List<ModelPessoa> pessoas) {
+    public Map<String, Object> cadastraPessoas(@RequestBody List<Pessoa> pessoas) {
 
         String errorMsg = service.validaInfo(pessoas);
         if (errorMsg != null){
@@ -51,7 +51,7 @@ public class ControllerPessoa {
     @GetMapping("/consultar")
     public Map<String, Object> consultarCadastro() {
         try {
-            List<ModelPessoa> pessoas = service.findAll();
+            List<Pessoa> pessoas = service.findAll();
             if (pessoas.isEmpty()) {
                 return util.estruturaAPI(BigDecimal.valueOf(2), "Requisição vazia! - []", pessoas);
             }
@@ -67,7 +67,7 @@ public class ControllerPessoa {
         try {
             boolean encontrou = util.buscaId(id);
             if (encontrou) {
-                Optional<ModelPessoa> pessoa = service.findById(id);
+                Optional<Pessoa> pessoa = service.findById(id);
                 return util.estruturaAPI(BigDecimal.ONE, "Pessoa encontrada com sucesso!", pessoa.get());
             } else {
                 return util.estruturaAPI(BigDecimal.valueOf(2), "ID não encontrado!", "[]");
