@@ -2,11 +2,9 @@ package com.estudosspringboot.estudospringboot.controller;
 
 import com.estudosspringboot.estudospringboot.model.Agendamento;
 import com.estudosspringboot.estudospringboot.model.Pessoa;
+import com.estudosspringboot.estudospringboot.model.Profissional;
 import com.estudosspringboot.estudospringboot.model.Servico;
-import com.estudosspringboot.estudospringboot.service.EmailService;
-import com.estudosspringboot.estudospringboot.service.ServiceAgendamento;
-import com.estudosspringboot.estudospringboot.service.ServicePessoa;
-import com.estudosspringboot.estudospringboot.service.ServiceServico;
+import com.estudosspringboot.estudospringboot.service.*;
 import com.estudosspringboot.estudospringboot.utils.Utilidades;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("api/agendamento")
-public class AgendamentoController {
+public class ControllerAgendamento {
 
     @Autowired
     private ServiceAgendamento serviceAgendamento;
@@ -29,6 +27,9 @@ public class AgendamentoController {
 
     @Autowired
     private ServiceServico serviceServico;
+
+    @Autowired
+    private ServiceProfissional serviceProfissional;
 
     @Autowired
     private Utilidades util;
@@ -56,6 +57,10 @@ public class AgendamentoController {
                 return util.estruturaAPI(BigDecimal.valueOf(9), "ID do serviço é obrigatório!", null);
             }
 
+            if (agendamento.getProfissional() == null || agendamento.getProfissional().getId() == null) {
+                return util.estruturaAPI(BigDecimal.valueOf(11), "ID do profissional é obrigatório!", null);
+            }
+
             Optional<Servico> servicoOptional = serviceServico.findById(agendamento.getServico().getId());
             if (!servicoOptional.isPresent()) {
                 return util.estruturaAPI(BigDecimal.valueOf(10), "Serviço com o ID informado não foi encontrado!", null);
@@ -68,10 +73,17 @@ public class AgendamentoController {
             }
             Pessoa pessoa = pessoaOptional.get();
 
+            Optional<Profissional> profissionalOptional = serviceProfissional.findById(agendamento.getProfissional().getId());
+            if (!profissionalOptional.isPresent()) {
+                return util.estruturaAPI(BigDecimal.valueOf(12), "Profissional com o ID informado não foi encontrado!", null);
+            }
+            Profissional profissional = profissionalOptional.get();
+
             agendamento.setDescricao(servico.getDescricao());
             agendamento.setValor(servico.getValor());
             agendamento.setPessoa(pessoa);
             agendamento.setServico(servico);
+            agendamento.setProfissional(profissional);
 
             if (serviceAgendamento.existeConflitoDeHorario(agendamento)) {
                 return util.estruturaAPI(BigDecimal.valueOf(8), "Já existe outro agendamento neste intervalo de horário!", null);
@@ -93,10 +105,12 @@ public class AgendamentoController {
                     "<tr><td style='font-weight: bold; width: 150px;'>Data:</td><td>" + savedAgendamento.getData() + "</td></tr>" +
                     "<tr style='background-color: #f9f9f9;'><td style='font-weight: bold;'>Hora:</td><td>" + savedAgendamento.getHora() + "</td></tr>" +
                     "<tr><td style='font-weight: bold;'>Descrição:</td><td>" + savedAgendamento.getDescricao() + "</td></tr>" +
-                    "<tr style='background-color: #f9f9f9;'><td style='font-weight: bold;'>Valor:</td><td>R$ " + String.format(Locale.US, "%.2f", savedAgendamento.getValor()) + "</td></tr>" +
+                    "<tr style='background-color: #f9f9f9;'><td style='font-weight: bold;'>Profissional:</td><td>" + savedAgendamento.getProfissional().getNome() + "</td></tr>" +
+                    "<tr><td style='font-weight: bold;'>Valor:</td><td>R$ " + String.format(Locale.US, "%.2f", savedAgendamento.getValor()) + "</td></tr>" +
                     "</table><p style='margin-top: 30px;'>Obrigado por usar nosso sistema!<br>Código Teste Pedro</p></td></tr>" +
                     "<tr><td style='padding: 10px; text-align: center; font-size: 12px; color: #777777; background-color: #f4f4f4; border-radius: 0 0 8px 8px;'>&copy; 2025 Sua Empresa. Todos os direitos reservados.</td></tr>" +
                     "</table></body></html>";
+
 
             emailService.sendEmail(to, subject, body);
 

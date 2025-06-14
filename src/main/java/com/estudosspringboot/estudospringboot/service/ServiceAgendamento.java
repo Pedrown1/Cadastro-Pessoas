@@ -85,6 +85,10 @@ public class ServiceAgendamento {
                 continue;
             }
 
+            if (!ag.getProfissional().getId().equals(novoAgendamento.getProfissional().getId())) {
+                continue;
+            }
+
             LocalTime horaInicioExistente = LocalTime.parse(ag.getHora(), formatterHora);
             int duracaoExistente = ag.getServico().getMinutos();
             LocalTime horaFimExistente = horaInicioExistente.plusMinutes(duracaoExistente);
