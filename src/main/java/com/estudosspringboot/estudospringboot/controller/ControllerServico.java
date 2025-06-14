@@ -31,6 +31,10 @@ public class ControllerServico {
                 return util.estruturaAPI(BigDecimal.valueOf(3), "Valor do serviço é obrigatório", null);
             }
 
+            if (servico.getMinutos() == null){
+                return util.estruturaAPI(BigDecimal.valueOf(4), "O tempo gasto em minutos é obrigatório", null);
+            }
+
             Servico saved = serviceServico.save(servico);
             return util.estruturaAPI(BigDecimal.ONE, "Serviço criado com sucesso!", saved);
 

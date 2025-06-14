@@ -20,5 +20,7 @@ public class Servico {
 
     private BigDecimal valor;
 
+    private Integer minutos;
+
     // LOMBOK - Getters e setters
 }

@@ -74,7 +74,7 @@ public class AgendamentoController {
             agendamento.setServico(servico);
 
             if (serviceAgendamento.existeConflitoDeHorario(agendamento)) {
-                return util.estruturaAPI(BigDecimal.valueOf(8), "Já existe agendamento com menos de 1 hora de diferença nesse dia!", null);
+                return util.estruturaAPI(BigDecimal.valueOf(8), "Já existe outro agendamento neste intervalo de horário!", null);
             }
 
             Agendamento savedAgendamento = serviceAgendamento.save(agendamento);

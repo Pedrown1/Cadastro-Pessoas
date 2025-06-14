@@ -72,25 +72,31 @@ public class ServiceAgendamento {
     }
 
     public boolean existeConflitoDeHorario(Agendamento novoAgendamento) {
-        DateTimeFormatter formatterData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter formatterHora = DateTimeFormatter.ofPattern("HH:mm");
 
-        LocalDate data = LocalDate.parse(novoAgendamento.getData(), formatterData);
-        LocalTime hora = LocalTime.parse(novoAgendamento.getHora(), formatterHora);
+        LocalTime horaInicioNovo = LocalTime.parse(novoAgendamento.getHora(), formatterHora);
+        int duracaoNovo = novoAgendamento.getServico().getMinutos();
+        LocalTime horaFimNovo = horaInicioNovo.plusMinutes(duracaoNovo);
 
-        List<Agendamento> agendamentosDoDia = repositoryAgendamento.findByData(novoAgendamento.getData());
+        List<Agendamento> agendamentosNoDia = repositoryAgendamento.findByData(novoAgendamento.getData());
 
-        for (Agendamento ag : agendamentosDoDia) {
-            if (ag.getHora() == null || ag.getHora().isBlank()) continue;
+        for (Agendamento ag : agendamentosNoDia) {
+            if (ag.getId() == novoAgendamento.getId()) {
+                continue;
+            }
 
-            LocalTime horaAgendada = LocalTime.parse(ag.getHora(), formatterHora);
-            long diferencaMinutos = Math.abs(java.time.Duration.between(horaAgendada, hora).toMinutes());
-            if (diferencaMinutos < 60) {
+            LocalTime horaInicioExistente = LocalTime.parse(ag.getHora(), formatterHora);
+            int duracaoExistente = ag.getServico().getMinutos();
+            LocalTime horaFimExistente = horaInicioExistente.plusMinutes(duracaoExistente);
+
+            boolean conflito = horaInicioNovo.isBefore(horaFimExistente) && horaFimNovo.isAfter(horaInicioExistente);
+            if (conflito) {
                 return true;
             }
         }
         return false;
     }
+
 
 
 
