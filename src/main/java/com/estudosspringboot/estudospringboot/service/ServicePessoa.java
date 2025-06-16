@@ -32,6 +32,10 @@ public class ServicePessoa {
         repository.deleteById(id);
     }
 
+    public Optional<Pessoa> findByEmail(String email) {
+        return repository.findByEmail(email);
+    }
+
     public String validaInfo(List<Pessoa> pessoas) {
 
         for (Pessoa pessoa : pessoas) {

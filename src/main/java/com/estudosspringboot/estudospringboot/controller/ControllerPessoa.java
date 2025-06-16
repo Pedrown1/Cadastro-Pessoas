@@ -6,6 +6,7 @@ import com.estudosspringboot.estudospringboot.model.Pessoa;
 import com.estudosspringboot.estudospringboot.service.ServicePessoa;
 import com.estudosspringboot.estudospringboot.utils.Utilidades;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -23,30 +24,45 @@ public class ControllerPessoa {
     @Autowired
     private Utilidades util;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @PostMapping("/auth")
     public Map<String, Object> auth(@RequestBody AuthRequest authRequest) {
-        String username = authRequest.getUsername();
-        String password = authRequest.getPassword();
+        Optional<Pessoa> userOpt = service.findByEmail(authRequest.getUsername());
 
-        if ("Pedro".equals(username) && "123456".equals(password)) {
-            String token = JwtUtil.generateToken(username);
-            return util.estruturaAPI(BigDecimal.ONE, "Requisição realizada com Sucesso!", token);
+        if (userOpt.isPresent()) {
+            Pessoa pessoa = userOpt.get();
+
+            if (passwordEncoder.matches(authRequest.getPassword(), pessoa.getSenha())) {
+                String token = JwtUtil.generateToken(pessoa.getEmail());
+                return util.estruturaAPI(BigDecimal.ONE, "Requisição realizada com Sucesso!", token);
+            }
         }
 
         return util.estruturaAPI(BigDecimal.valueOf(3), "Usuário ou senha inválidos", null);
     }
 
-    @PostMapping("/pesssoa/cadastro")
+
+    @PostMapping("/pessoa/cadastro")
     public Map<String, Object> cadastraPessoas(@RequestBody List<Pessoa> pessoas) {
 
         String errorMsg = service.validaInfo(pessoas);
-        if (errorMsg != null){
+        if (errorMsg != null) {
             return util.estruturaAPI(BigDecimal.valueOf(5), errorMsg, null);
+        }
+
+        for (Pessoa pessoa : pessoas) {
+            if (pessoa.getSenha() != null) {
+                String senhaCriptografada = passwordEncoder.encode(pessoa.getSenha());
+                pessoa.setSenha(senhaCriptografada);
+            }
         }
 
         service.saveAll(pessoas);
         return util.estruturaAPI(BigDecimal.ONE, "Pessoa Cadastrada com Sucesso!", pessoas);
     }
+
 
     @GetMapping("/pessoa/consultar")
     public Map<String, Object> consultarCadastro() {

@@ -22,5 +22,7 @@ public class Pessoa {
 
     private String email;
 
+    private String senha;
+
     // Lombok (GET/SET)
 }

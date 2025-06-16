@@ -18,10 +18,13 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        if (request.getRequestURI().equals("/api/auth")) {
+        String path = request.getRequestURI();
+
+        if (path.equals("/api/auth") || path.equals("/api/pessoa/cadastro")) {
             filterChain.doFilter(request, response);
             return;
         }
+
 
         String authHeader = request.getHeader("Authorization");
 
