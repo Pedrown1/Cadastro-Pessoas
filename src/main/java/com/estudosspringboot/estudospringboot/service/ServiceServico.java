@@ -27,4 +27,8 @@ public class ServiceServico {
     public Servico save(Servico servico) {
         return servicoRepository.save(servico);
     }
+
+    public void deleteById(Long id) {
+        servicoRepository.deleteById(id);
+    }
 }

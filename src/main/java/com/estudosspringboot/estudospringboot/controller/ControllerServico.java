@@ -74,4 +74,24 @@ public class ControllerServico {
             return util.estruturaAPI(BigDecimal.ZERO, "Erro ao buscar serviço: " + e.getMessage(), null);
         }
     }
+
+    // Deletar serviço por ID
+    @DeleteMapping("/deletar/{id}")
+    public Object deletarServico(@PathVariable Long id) {
+        try {
+            Optional<Servico> servicoOptional = serviceServico.findById(id);
+
+            if (servicoOptional.isPresent()) {
+                serviceServico.deleteById(id);
+                return util.estruturaAPI(BigDecimal.ONE, "Serviço excluído com sucesso", null);
+            } else {
+                return util.estruturaAPI(BigDecimal.valueOf(2), "Serviço não encontrado para exclusão", null);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return util.estruturaAPI(BigDecimal.ZERO, "Erro ao excluir serviço: " + e.getMessage(), null);
+        }
+    }
+
 }
