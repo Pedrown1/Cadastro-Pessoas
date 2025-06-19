@@ -18,13 +18,21 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth", "/api/pessoa/cadastro").permitAll()
+                        .requestMatchers(
+                                "/api/auth",
+                                "/api/pessoa/cadastro",
+                                "/cadastro",
+                                "/login",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
-
-                .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class) // Adiciona o filtro JWT
+                .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

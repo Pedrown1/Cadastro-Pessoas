@@ -20,7 +20,14 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        if (path.equals("/api/auth") || path.equals("/api/pessoa/cadastro")) {
+        if (path.equals("/api/auth") ||
+                path.equals("/api/pessoa/cadastro") ||
+                path.equals("/cadastro") ||
+                path.equals("/login") ||
+                path.startsWith("/css") ||
+                path.startsWith("/js") ||
+                path.startsWith("/images")) {
+
             filterChain.doFilter(request, response);
             return;
         }

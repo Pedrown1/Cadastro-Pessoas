@@ -29,7 +29,17 @@ public class ControllerPessoa {
 
     @PostMapping("/auth")
     public Map<String, Object> auth(@RequestBody AuthRequest authRequest) {
-        Optional<Pessoa> userOpt = service.findByEmail(authRequest.getUsername());
+        String username = authRequest.getUsername();
+        Optional<Pessoa> userOpt;
+
+        boolean isEmail = username.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+
+        if (isEmail) {
+            userOpt = service.findByEmail(username);
+        } else {
+            String cpfNumeros = username.replaceAll("\\D", "");
+            userOpt = service.findByCpf(cpfNumeros);
+        }
 
         if (userOpt.isPresent()) {
             Pessoa pessoa = userOpt.get();
@@ -44,6 +54,7 @@ public class ControllerPessoa {
     }
 
 
+
     @PostMapping("/pessoa/cadastro")
     public Map<String, Object> cadastraPessoas(@RequestBody List<Pessoa> pessoas) {
 
@@ -53,6 +64,11 @@ public class ControllerPessoa {
         }
 
         for (Pessoa pessoa : pessoas) {
+            if (pessoa.getCpf() != null) {
+                String cpfLimpo = pessoa.getCpf().replaceAll("[^\\d]", "");
+                pessoa.setCpf(cpfLimpo);
+            }
+
             if (pessoa.getSenha() != null) {
                 String senhaCriptografada = passwordEncoder.encode(pessoa.getSenha());
                 pessoa.setSenha(senhaCriptografada);
