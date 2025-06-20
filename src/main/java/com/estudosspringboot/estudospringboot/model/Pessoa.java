@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @Table(name = "pessoa")
@@ -23,6 +25,10 @@ public class Pessoa {
     private String email;
 
     private String senha;
+
+    private String codigoVerificacao;
+
+    private LocalDateTime dataEnvio;
 
     // Lombok (GET/SET)
 }

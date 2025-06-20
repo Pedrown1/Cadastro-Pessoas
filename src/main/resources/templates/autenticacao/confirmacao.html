@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Confirmação de Email</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAALklEQVR4AWNAAUGASkIBBqZCVHgP3rj0aCgVGLIMAgT4SBVAw0FEQ4hgRYbBXsG3VEzABx0Qj5N+Jr5wAAAABJRU5ErkJggg==" />
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
+            min-height: 100vh;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+        }
+        .btn-primary {
+            background-color: #7b2cbf;
+            border-color: #7b2cbf;
+        }
+        .btn-primary:hover {
+            background-color: #5a189a;
+            border-color: #5a189a;
+        }
+        #message {
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        #message.success {
+            color: #28a745;
+        }
+        #message.error {
+            color: #dc3545;
+        }
+        #resendCode {
+            margin-top: 10px;
+            cursor: pointer;
+            color: #7b2cbf;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+        #resendCode:hover {
+            color: #5a189a;
+        }
+    </style>
+</head>
+<body>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
+        <h3 class="text-center mb-4">Confirmação de Email</h3>
+        <form id="formConfirmacao">
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" id="emailInput" class="form-control" readonly />
+            </div>
+
+
+            <div class="mb-4">
+                <label class="form-label">Código de Verificação</label>
+                <input type="text" name="codigo" class="form-control" placeholder="Digite o código recebido" required />
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Confirmar</button>
+            </div>
+            <div id="resendCode" title="Reenviar código de verificação">Reenviar Código</div>
+            <div id="message"></div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+        const emailInput = document.getElementById("emailInput");
+        const emailFromUrl = getQueryParam("email");
+        if (emailFromUrl) {
+            emailInput.value = emailFromUrl;
+            emailInput.readOnly = true;
+        }
+    });
+
+    const form = document.getElementById("formConfirmacao");
+    const messageDiv = document.getElementById("message");
+    const resendCode = document.getElementById("resendCode");
+
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
+        messageDiv.textContent = "";
+        messageDiv.className = "";
+
+        const email = document.getElementById("emailInput").value.trim();
+        const codigo = form.querySelector('input[name="codigo"]').value.trim();
+
+        fetch("/api/pessoa/confirmar-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, codigo })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.Status === 1 || data["Status: "] === 1) {
+                messageDiv.textContent = "Email Confirmado com sucesso!";
+                messageDiv.classList.add("success");
+                setTimeout(() => {
+                    window.location.href = "/login";
+                }, 2000);
+            } else {
+                messageDiv.textContent = data["Descrição: "] || data["descrição"] || "Código inválido ou expirado.";
+                messageDiv.classList.add("error");
+            }
+        })
+        .catch(() => {
+            messageDiv.textContent = "Erro ao confirmar. Tente novamente.";
+            messageDiv.classList.add("error");
+        });
+    });
+
+    resendCode.addEventListener("click", () => {
+        messageDiv.textContent = "";
+        messageDiv.className = "";
+
+        const email = document.getElementById("emailInput").value.trim();
+        if (!email) {
+            messageDiv.textContent = "Informe o email para reenviar o código.";
+            messageDiv.classList.add("error");
+            return;
+        }
+
+        fetch("/api/pessoa/reenviar-codigo", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.Status === 1 || data["Status: "] === 1) {
+                messageDiv.textContent = "Código reenviado para o email.";
+                messageDiv.classList.add("success");
+            } else {
+                messageDiv.textContent = data["Descrição: "] || data["descrição"] || "Erro ao reenviar o código.";
+                messageDiv.classList.add("error");
+            }
+        })
+        .catch(() => {
+            messageDiv.textContent = "Erro ao reenviar o código. Tente novamente.";
+            messageDiv.classList.add("error");
+        });
+    });
+</script>
+</body>
+</html>

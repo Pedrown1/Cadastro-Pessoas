@@ -21,7 +21,10 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth",
                                 "/api/pessoa/cadastro",
+                                "/api/pessoa/confirmar-email",
+                                "/api/pessoa/reenviar-codigo",
                                 "/cadastro",
+                                "/confirmacao",
                                 "/login",
                                 "/css/**",
                                 "/js/**",
@@ -32,6 +35,7 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 
 
     @Bean

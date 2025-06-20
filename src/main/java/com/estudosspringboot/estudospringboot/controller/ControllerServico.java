@@ -20,7 +20,6 @@ public class ControllerServico {
     @Autowired
     private Utilidades util;
 
-    // Criar um novo serviço
     @PostMapping("/cadastrar")
     public Object cadastrarServico(@RequestBody Servico servico) {
         try {
@@ -44,7 +43,7 @@ public class ControllerServico {
         }
     }
 
-    // Listar todos os serviços
+
     @GetMapping("/listar")
     public Object listarServicos() {
         try {
@@ -59,7 +58,7 @@ public class ControllerServico {
         }
     }
 
-    // Buscar serviço por ID
+
     @GetMapping("/{id}")
     public Object buscarServicoPorId(@PathVariable Long id) {
         try {
@@ -75,7 +74,7 @@ public class ControllerServico {
         }
     }
 
-    // Deletar serviço por ID
+
     @DeleteMapping("/deletar/{id}")
     public Object deletarServico(@PathVariable Long id) {
         try {

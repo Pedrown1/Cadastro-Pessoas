@@ -13,6 +13,7 @@ import java.time.format.DateTimeParseException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 @Component
 public class Utilidades {
@@ -57,6 +58,12 @@ public class Utilidades {
             return false;
         }
     }
+
+    public String gerarCodigo() {
+        int codigo = new Random().nextInt(900000) + 100000;
+        return String.valueOf(codigo);
+    }
+
 
 
 }

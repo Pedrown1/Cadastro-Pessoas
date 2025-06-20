@@ -15,4 +15,9 @@ public class WebController {
     public String mostrarLogin() {
         return "autenticacao/login";
     }
+
+    @GetMapping("/confirmacao")
+    public String mostrarConfirmacao() {
+        return "autenticacao/confirmacao";
+    }
 }

@@ -96,7 +96,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // Máscara de CPF
+
     document.getElementById('cpf').addEventListener('input', function (e) {
         let value = e.target.value;
         value = value.replace(/\D/g, '');
@@ -112,45 +112,45 @@
     const messageDiv = document.getElementById("message");
 
     form.addEventListener("submit", function (event) {
-        event.preventDefault();
+    event.preventDefault();
 
-        messageDiv.textContent = "";
-        messageDiv.className = "";
+    messageDiv.textContent = "";
+    messageDiv.className = "";
 
-        const formData = new FormData(event.target);
-        const nome = formData.get("nome").trim();
-        const idade = parseInt(formData.get("idade"), 10);
-        const cpf = formData.get("cpf");
-        const email = formData.get("email");
-        const senha = formData.get("senha");
+    const formData = new FormData(event.target);
+    const nome = formData.get("nome").trim();
+    const idade = parseInt(formData.get("idade"), 10);
+    const cpf = formData.get("cpf");
+    const email = formData.get("email");
+    const senha = formData.get("senha");
 
-        const payload = { nome, idade, cpf, email, senha };
+    const payload = { nome, idade, cpf, email, senha };
 
-        fetch("/api/pessoa/cadastro", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify([payload])
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data["Status: "] === 1 || data["Status"] === 1) {
-                messageDiv.textContent = "Cadastro realizado com sucesso!";
-                messageDiv.classList.add("success");
+    fetch("/api/pessoa/cadastro", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify([payload])
+    })
+    .then(response => response.json())
+    .then(data => {
+    const status = data["Status"] ?? data["Status: "] ?? data["status"] ?? null;
+    if (parseInt(status) === 1) {
+        const email = formData.get("email").trim();
 
-                setTimeout(() => {
-                    window.location.href = "/login";
-                }, 1500);
-            } else {
-                messageDiv.textContent = (data["Descrição: "] || data["descrição"] || "Erro desconhecido");
-                messageDiv.classList.add("error");
-            }
-        })
-        .catch(error => {
-            console.error("Erro no cadastro", error);
-            messageDiv.textContent = "Erro ao cadastrar. Verifique os dados.";
-            messageDiv.classList.add("error");
-        });
+
+        window.location.href = "/confirmacao?email=" + encodeURIComponent(email);
+    } else {
+        messageDiv.textContent = data["Descrição: "] || data["descrição"] || "Erro desconhecido";
+        messageDiv.classList.add("error");
+    }
+})
+    .catch(error => {
+        console.error("Erro no cadastro", error);
+        messageDiv.textContent = "Erro ao cadastrar. Verifique os dados.";
+        messageDiv.classList.add("error");
     });
+});
+
 </script>
 </body>
 </html>

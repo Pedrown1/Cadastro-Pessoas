@@ -22,8 +22,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (path.equals("/api/auth") ||
                 path.equals("/api/pessoa/cadastro") ||
+                path.equals("/api/pessoa/confirmar-email") ||     // acrescentado
+                path.equals("/api/pessoa/reenviar-codigo") ||     // acrescentado
                 path.equals("/cadastro") ||
                 path.equals("/login") ||
+                path.equals("/confirmacao") ||
                 path.startsWith("/css") ||
                 path.startsWith("/js") ||
                 path.startsWith("/images")) {
@@ -31,6 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+
 
 
         String authHeader = request.getHeader("Authorization");
@@ -51,7 +55,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
 
             } catch (JwtException | IllegalArgumentException e) {
-                // Token inválido ou expirado
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("application/json");
                 response.getWriter().write("{\n" +
@@ -63,7 +66,6 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
-        // Token ausente
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
         response.getWriter().write("{\n" +

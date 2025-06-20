@@ -40,7 +40,12 @@ public class ServicePessoa {
         return repository.findByCpf(cpf);
     }
 
+    public Optional<Pessoa> findByEmailAndCodigo(String email, String codigo) {
+        return repository.findByEmailAndCodigoVerificacao(email, codigo);
+    }
+
     public String validaInfo(List<Pessoa> pessoas) {
+
 
         for (Pessoa pessoa : pessoas) {
 
