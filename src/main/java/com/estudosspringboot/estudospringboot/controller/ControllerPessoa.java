@@ -55,6 +55,7 @@ public class ControllerPessoa {
 
             if (passwordEncoder.matches(authRequest.getPassword(), pessoa.getSenha())) {
                 String token = JwtUtil.generateToken(pessoa.getEmail());
+                System.out.println("TOKEN: " + token);
                 return util.estruturaAPI(BigDecimal.ONE, "Requisição realizada com Sucesso!", token);
             }
         }

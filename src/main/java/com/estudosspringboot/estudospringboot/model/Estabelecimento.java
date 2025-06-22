@@ -5,10 +5,10 @@ import lombok.Data;
 import lombok.ToString;
 
 @Entity
-@Table(name = "profissional")
+@Table(name = "estabelecimento")
 @Data
 @ToString
-public class Profissional {
+public class Estabelecimento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,9 +16,10 @@ public class Profissional {
 
     private String nome;
 
-    private String profissao;
+    private String email;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "estabelecimento_id")
-    private Estabelecimento estabelecimento;
+    private String telefone;
+
+    private String imagem; // Caminho da imagem ou base64, dependendo da sua necessidade
+
 }

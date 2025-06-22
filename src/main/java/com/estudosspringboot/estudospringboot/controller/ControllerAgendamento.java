@@ -1,9 +1,6 @@
 package com.estudosspringboot.estudospringboot.controller;
 
-import com.estudosspringboot.estudospringboot.model.Agendamento;
-import com.estudosspringboot.estudospringboot.model.Pessoa;
-import com.estudosspringboot.estudospringboot.model.Profissional;
-import com.estudosspringboot.estudospringboot.model.Servico;
+import com.estudosspringboot.estudospringboot.model.*;
 import com.estudosspringboot.estudospringboot.service.*;
 import com.estudosspringboot.estudospringboot.utils.Utilidades;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +23,13 @@ public class ControllerAgendamento {
     private ServicePessoa servicePessoa;
 
     @Autowired
-    private ServiceServico serviceServico;
+    private ServiceEstabelecimento serviceEstabelecimento;
 
     @Autowired
     private ServiceProfissional serviceProfissional;
+
+    @Autowired
+    private ServiceServico serviceServico;
 
     @Autowired
     private Utilidades util;
@@ -61,6 +61,10 @@ public class ControllerAgendamento {
                 return util.estruturaAPI(BigDecimal.valueOf(11), "ID do profissional é obrigatório!", null);
             }
 
+            if (agendamento.getEstabelecimento() == null || agendamento.getEstabelecimento().getId() == null) {
+                return util.estruturaAPI(BigDecimal.valueOf(13), "ID do estabelecimento é obrigatório!", null);
+            }
+
             Optional<Servico> servicoOptional = serviceServico.findById(agendamento.getServico().getId());
             if (!servicoOptional.isPresent()) {
                 return util.estruturaAPI(BigDecimal.valueOf(10), "Serviço com o ID informado não foi encontrado!", null);
@@ -79,11 +83,28 @@ public class ControllerAgendamento {
             }
             Profissional profissional = profissionalOptional.get();
 
+            Optional<Estabelecimento> estabelecimentoOptional = serviceEstabelecimento.findById(agendamento.getEstabelecimento().getId());
+            if (!estabelecimentoOptional.isPresent()) {
+                return util.estruturaAPI(BigDecimal.valueOf(14), "Estabelecimento com o ID informado não foi encontrado!", null);
+            }
+            Estabelecimento estabelecimento = estabelecimentoOptional.get();
+
+            if (!servico.getEstabelecimento().getId().equals(estabelecimento.getId())) {
+                return util.estruturaAPI(BigDecimal.valueOf(15),
+                        "O serviço informado não pertence ao estabelecimento informado!", null);
+            }
+
+            if (!profissional.getEstabelecimento().getId().equals(estabelecimento.getId())) {
+                return util.estruturaAPI(BigDecimal.valueOf(16),
+                        "O profissional informado não pertence ao estabelecimento informado!", null);
+            }
+
             agendamento.setDescricao(servico.getDescricao());
             agendamento.setValor(servico.getValor());
             agendamento.setPessoa(pessoa);
             agendamento.setServico(servico);
             agendamento.setProfissional(profissional);
+            agendamento.setEstabelecimento(estabelecimento);
 
             if (serviceAgendamento.existeConflitoDeHorario(agendamento)) {
                 return util.estruturaAPI(BigDecimal.valueOf(8), "Já existe outro agendamento neste intervalo de horário!", null);
@@ -93,33 +114,18 @@ public class ControllerAgendamento {
 
             String to = pessoa.getEmail();
             String subject = "Novo Agendamento Criado!";
-            String body = "<!DOCTYPE html>" +
-                    "<html lang='pt-br'>" +
-                    "<head><meta charset='UTF-8'><title>Agendamento Realizado!</title></head>" +
-                    "<body style='font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;'>" +
-                    "<table align='center' width='600' cellpadding='0' cellspacing='0' style='background-color: #ffffff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);'>" +
-                    "<tr><td style='padding: 20px; text-align: center; background-color: #007bff; color: white; border-radius: 8px 8px 0 0;'><h1 style='margin: 0;'>Novo Agendamento!</h1></td></tr>" +
-                    "<tr><td style='padding: 20px; color: #333333; font-size: 16px;'>" +
-                    "<p>Olá,</p><p>Um novo agendamento foi realizado com sucesso. Seguem os detalhes:</p>" +
-                    "<table width='100%' cellpadding='5' cellspacing='0' style='border-collapse: collapse;'>" +
-                    "<tr><td style='font-weight: bold; width: 150px;'>Data:</td><td>" + savedAgendamento.getData() + "</td></tr>" +
-                    "<tr style='background-color: #f9f9f9;'><td style='font-weight: bold;'>Hora:</td><td>" + savedAgendamento.getHora() + "</td></tr>" +
-                    "<tr><td style='font-weight: bold;'>Descrição:</td><td>" + savedAgendamento.getDescricao() + "</td></tr>" +
-                    "<tr style='background-color: #f9f9f9;'><td style='font-weight: bold;'>Profissional:</td><td>" + savedAgendamento.getProfissional().getNome() + "</td></tr>" +
-                    "<tr><td style='font-weight: bold;'>Valor:</td><td>R$ " + String.format(Locale.US, "%.2f", savedAgendamento.getValor()) + "</td></tr>" +
-                    "</table><p style='margin-top: 30px;'>Obrigado por usar nosso sistema!<br>Código Teste Pedro</p></td></tr>" +
-                    "<tr><td style='padding: 10px; text-align: center; font-size: 12px; color: #777777; background-color: #f4f4f4; border-radius: 0 0 8px 8px;'>&copy; 2025 Sua Empresa. Todos os direitos reservados.</td></tr>" +
-                    "</table></body></html>";
-
+            String body = serviceAgendamento.gerarBodyEmail(savedAgendamento);
 
             emailService.sendEmail(to, subject, body);
 
             return util.estruturaAPI(BigDecimal.ONE, "Agendamento realizado com sucesso!", savedAgendamento);
+
         } catch (Exception e) {
             e.printStackTrace();
             return util.estruturaAPI(BigDecimal.ZERO, "Falha ao realizar agendamento: " + e.getMessage(), null);
         }
     }
+
 
 
     @GetMapping("/consultar")

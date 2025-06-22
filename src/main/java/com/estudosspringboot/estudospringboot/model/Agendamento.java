@@ -21,6 +21,10 @@ public class Agendamento {
     @JoinColumn(name = "pessoa_id", referencedColumnName = "id")
     private Pessoa pessoa;
 
+    @ManyToOne
+    @JoinColumn(name = "estabelecimento_id", referencedColumnName = "id")
+    private Estabelecimento estabelecimento;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "profissional_id", referencedColumnName = "id")
     private Profissional profissional;

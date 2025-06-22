@@ -7,6 +7,10 @@ import com.estudosspringboot.estudospringboot.utils.Utilidades;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -101,7 +105,26 @@ public class ServiceAgendamento {
         return false;
     }
 
+    public String gerarBodyEmail(Agendamento ag) {
+        try {
+            String path = "src/main/resources/templates/email/emailAgendamento.html";
+            String template = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
 
+            return String.format(template,
+                    ag.getData(),
+                    ag.getHora(),
+                    ag.getDescricao(),
+                    ag.getProfissional().getNome(),
+                    ag.getValor(),
+                    ag.getEstabelecimento().getNome(),
+                    ag.getEstabelecimento().getEmail(),
+                    ag.getEstabelecimento().getTelefone()
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "<p>Erro ao gerar e-mail.</p>";
+        }
+    }
 
 
 }

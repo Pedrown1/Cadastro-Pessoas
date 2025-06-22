@@ -22,5 +22,8 @@ public class Servico {
 
     private Integer minutos;
 
-    // LOMBOK - Getters e setters
+    @ManyToOne
+    @JoinColumn(name = "estabelecimento_id")
+    private Estabelecimento estabelecimento;
 }
+

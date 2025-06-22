@@ -1,11 +1,13 @@
 package com.estudosspringboot.estudospringboot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+@JsonIgnoreProperties({"codigoVerificacao", "dataEnvio"})
 @Entity
 @Data
 @Table(name = "pessoa")

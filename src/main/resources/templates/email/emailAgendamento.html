@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang='pt-br'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Agendamento Realizado!</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .header { background-color: #007bff; color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center; }
+        .content { padding: 20px; color: #333333; font-size: 16px; }
+        .info-table { width: 100%%; border-collapse: collapse; margin-top: 15px; }
+        .info-table td { padding: 8px 5px; border: 1px solid #ddd; }
+        .info-table tr:nth-child(even) { background-color: #f9f9f9; }
+        .info-label { font-weight: bold; width: 150px; background-color: #f0f0f0; }
+        .estabelecimento-box {
+          border: 2px solid #28a745;
+          background-color: #e6f4ea;
+          border-radius: 6px;
+          padding: 15px;
+          margin: 20px 0;
+          font-weight: bold;
+          color: #155724;
+        }
+        .footer {
+          padding: 10px;
+          text-align: center;
+          font-size: 12px;
+          color: #777777;
+          background-color: #f4f4f4;
+          border-radius: 0 0 8px 8px;
+        }
+    </style>
+</head>
+<body>
+<div class='container'>
+    <div class='header'><h1>Novo Agendamento!</h1></div>
+    <div class='content'>
+        <p>Olá,</p>
+        <p>Um novo agendamento foi realizado com sucesso. Seguem os detalhes:</p>
+
+        <!-- Tabela com os dados do agendamento -->
+        <table class='info-table'>
+            <tr><td class='info-label'>Data:</td><td>%s</td></tr>
+            <tr><td class='info-label'>Hora:</td><td>%s</td></tr>
+            <tr><td class='info-label'>Descrição:</td><td>%s</td></tr>
+            <tr><td class='info-label'>Profissional:</td><td>%s</td></tr>
+            <tr><td class='info-label'>Valor:</td><td>R$ %.2f</td></tr>
+        </table>
+
+        <!-- Destaque do Estabelecimento -->
+        <div class='estabelecimento-box'>
+            <h3>Informações do Estabelecimento</h3>
+            <p><strong>Nome:</strong> %s</p>
+            <p><strong>Email:</strong> %s</p>
+            <p><strong>Telefone:</strong> %s</p>
+        </div>
+
+        <p style='margin-top: 30px;'>Obrigado por usar nosso sistema!<br>Código Teste Pedro</p>
+    </div>
+    <div class='footer'>&copy; 2025 Sua Empresa. Todos os direitos reservados.</div>
+</div>
+</body>
+</html>
