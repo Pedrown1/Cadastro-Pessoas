@@ -83,13 +83,19 @@ public class ServicePessoa {
                 return "O E-mail informado é inválido.";
             }
 
-            String senhaRegex = "^(?=.*[A-Z])(?=.*[\\W_]).{8,}$";
-            Pattern senhaPattern = Pattern.compile(senhaRegex);
-            Matcher senhaMatcher = senhaPattern.matcher(pessoa.getSenha());
-            if (!senhaMatcher.matches()) {
-                return "Senha: mínimo 8 caracteres, com letra maiúscula e um caractere especial.";
+            String senha = pessoa.getSenha();
+
+            if (senha.length() < 8) {
+                return "Senha: mínimo 8 caracteres.";
             }
 
+            if (!senha.matches(".*[A-Z].*")) {
+                return "Senha: deve conter ao menos uma letra maiúscula.";
+            }
+
+            if (!senha.matches(".*[\\W_].*")) {
+                return "Senha: deve conter ao menos um caractere especial.";
+            }
         }
 
         return null;

@@ -20,4 +20,10 @@ public class WebController {
     public String mostrarConfirmacao() {
         return "autenticacao/confirmacao";
     }
+
+    @GetMapping("/estabelecimento")
+    public String viewEstabelecimentos() {
+        return "estabelecimento/local";
+    }
+
 }

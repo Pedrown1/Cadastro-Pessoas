@@ -99,11 +99,10 @@
 
                 console.log("Token recebido:", data["Dados: "]);
 
-                /*
                 setTimeout(() => {
-                    window.location.href = "/home";
+                    window.location.href = "/estabelecimento";
                 }, 1500);
-                */
+
 
             } else {
                 messageDiv.textContent = data["Descrição: "] || data["descrição"] || "Erro ao realizar login.";

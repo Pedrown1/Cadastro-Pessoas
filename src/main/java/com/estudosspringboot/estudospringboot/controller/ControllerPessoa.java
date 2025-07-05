@@ -40,7 +40,7 @@ public class ControllerPessoa {
         boolean isEmail = username.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
 
         if (isEmail) {
-            userOpt = service.findByEmail(username);
+            userOpt = service.findByEmail(username.toLowerCase());
         } else {
             String cpfNumeros = username.replaceAll("\\D", "");
             userOpt = service.findByCpf(cpfNumeros);
@@ -114,6 +114,7 @@ public class ControllerPessoa {
                 pessoa.setSenha(senhaCriptografada);
             }
 
+            pessoa.setEmail(pessoa.getEmail().toLowerCase());
 
             String codigo = util.gerarCodigo();
             pessoa.setCodigoVerificacao(codigo);

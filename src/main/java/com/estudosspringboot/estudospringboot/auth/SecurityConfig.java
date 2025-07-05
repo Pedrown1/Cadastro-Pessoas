@@ -26,6 +26,8 @@ public class SecurityConfig {
                                 "/cadastro",
                                 "/confirmacao",
                                 "/login",
+                                "/estabelecimento",
+                                "/estabelecimento/local.html",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**"

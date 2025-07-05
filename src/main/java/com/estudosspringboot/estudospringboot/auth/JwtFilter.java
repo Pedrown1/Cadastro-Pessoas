@@ -22,11 +22,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (path.equals("/api/auth") ||
                 path.equals("/api/pessoa/cadastro") ||
-                path.equals("/api/pessoa/confirmar-email") ||     // acrescentado
-                path.equals("/api/pessoa/reenviar-codigo") ||     // acrescentado
+                path.equals("/api/pessoa/confirmar-email") ||
+                path.equals("/api/pessoa/reenviar-codigo") ||
                 path.equals("/cadastro") ||
                 path.equals("/login") ||
                 path.equals("/confirmacao") ||
+                path.equals("/estabelecimento") || path.equals("/estabelecimento/local.html") ||
                 path.startsWith("/css") ||
                 path.startsWith("/js") ||
                 path.startsWith("/images")) {

@@ -81,7 +81,7 @@
         const emailInput = document.getElementById("emailInput");
         const emailFromUrl = getQueryParam("email");
         if (emailFromUrl) {
-            emailInput.value = emailFromUrl;
+            emailInput.value = emailFromUrl.toLowerCase();
             emailInput.readOnly = true;
         }
     });

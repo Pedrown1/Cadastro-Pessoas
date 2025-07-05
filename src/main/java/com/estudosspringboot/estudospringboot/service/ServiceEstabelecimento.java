@@ -36,4 +36,7 @@ public class ServiceEstabelecimento {
         repository.deleteById(id);
     }
 
+    public List<Estabelecimento> findByNomeContainingIgnoreCase(String nome) {
+        return repository.findByNomeContainingIgnoreCase(nome);
+    }
 }
