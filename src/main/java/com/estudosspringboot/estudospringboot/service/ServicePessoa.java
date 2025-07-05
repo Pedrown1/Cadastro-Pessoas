@@ -28,6 +28,14 @@ public class ServicePessoa {
         return repository.findById(id);
     }
 
+    public boolean buscaId(Long id) {
+        Optional<Pessoa> pessoa = findById(id);
+        if (pessoa.isPresent()) {
+            return true;
+        }
+        return false;
+    }
+
     public void deleteById(Long id) {
         repository.deleteById(id);
     }

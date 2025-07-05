@@ -173,7 +173,7 @@ public class ControllerPessoa {
     @GetMapping("/pessoa/consultar/{id}")
     public Map<String, Object> consultarCadastroById(@PathVariable Long id) {
         try {
-            boolean encontrou = util.buscaId(id);
+            boolean encontrou = service.buscaId(id);
             if (encontrou) {
                 Optional<Pessoa> pessoa = service.findById(id);
                 return util.estruturaAPI(BigDecimal.ONE, "Pessoa encontrada com sucesso!", pessoa.get());
@@ -189,7 +189,7 @@ public class ControllerPessoa {
     @DeleteMapping("/pessoa/delete/{id}")
     public Map<String, Object> deletarPessoa(@PathVariable Long id) {
         try {
-            boolean encontrou = util.buscaId(id);
+            boolean encontrou = service.buscaId(id);
             if (encontrou) {
                 service.deleteById(id);
                 return util.estruturaAPI(BigDecimal.ONE, "Deletado com Sucesso!", "[ID - " + id + "]");

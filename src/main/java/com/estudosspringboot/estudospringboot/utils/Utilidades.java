@@ -31,14 +31,6 @@ public class Utilidades {
         return response;
     }
 
-    public boolean buscaId(Long id) {
-        Optional<Pessoa> pessoa = service.findById(id);
-        if (pessoa.isPresent()) {
-            return true;
-        }
-        return false;
-    }
-
     public boolean validarFormatoData(String data) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
